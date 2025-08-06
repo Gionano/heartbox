@@ -1,0 +1,143 @@
+<!DOCTYPE HTML><html><head>
+  <title>HeartBox by Almei</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    @keyframes wobble {
+      0% { transform: rotate(0deg) scale(1); }
+      15% { transform: rotate(-8deg) scale(1.1); }
+      30% { transform: rotate(6deg); }
+      45% { transform: rotate(-6deg); }
+      60% { transform: rotate(4deg); }
+      75% { transform: rotate(-2deg); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+    html { height: 100%; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+    .icon {
+      font-size: 3.5em;
+      color: #e91e63;
+      animation: wobble 2.5s infinite;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-family: 'Playfair Display', serif;
+      color: #d81b60;
+      font-size: 2.5em;
+      font-weight: 700;
+      margin: 0 0 20px 0;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    label {
+      color: #555;
+      font-size: 1.1em;
+      margin-bottom: 15px;
+      display: block;
+    }
+    input[type="text"] {
+      width: calc(100% - 24px);
+      padding: 12px;
+      border-radius: 10px;
+      border: 2px solid #ddd;
+      margin-bottom: 25px;
+      font-size: 1em;
+      font-family: 'Poppins', sans-serif;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #e91e63;
+      box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+    }
+    input[type="submit"] {
+      padding: 15px 30px;
+      border-radius: 50px;
+      border: none;
+      background: linear-gradient(45deg, #e91e63, #c2185b);
+      color: white;
+      font-size: 1.1em;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 15px rgba(233, 30, 99, 0.4);
+    }
+    input[type="submit"]:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(233, 30, 99, 0.6);
+    }
+  </style>
+  </head><body>
+  <div class="container">
+    <div class="icon">&#128232;</div>
+    <h2>Kotak Kenangan</h2>
+    <form action="/get">
+      <label for="input1">Tulis pesan kamu untuk di tampilkan, almeii:</label>
+      <input type="text" id="input1" name="input1" maxlength="100" required>
+      <br>
+      <input type="submit" value="Kirim pesan kamu">
+    </form>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<script>
+  // KONFIGURASI FIREBASE ANDA
+  const firebaseConfig = {
+    apiKey: "API_KEY_ANDA", // Tidak perlu untuk Realtime DB, tapi biarkan saja
+    authDomain: "NAMA-PROYEK.firebaseapp.com",
+    databaseURL: "https://heartbox-fef78-default-rtdb.asia-southeast1.firebasedatabase.app" // <-- GANTI DENGAN URL DATABASE ANDA
+  };
+
+  // Inisialisasi Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // Mengirim data saat form disubmit
+  const form = document.querySelector('form');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const messageInput = document.getElementById('input1');
+    const message = messageInput.value;
+
+    if (message) {
+      // Simpan pesan ke Firebase di path 'latestMessage'
+      database.ref('heartbox/message').set({
+        text: message,
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      })
+      .then(() => {
+        // Arahkan ke halaman sukses
+        window.location.href = 'success.html';
+      })
+      .catch((error) => {
+        console.error("Gagal mengirim:", error);
+        window.location.href = 'error.html';
+      });
+    }
+  });
+</script>
+</body>
+</html>
