@@ -6,8 +6,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Paho MQTT Client dari CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <!-- Memuat Paho MQTT Client dari CDN yang andal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.min.js" type="text/javascript"></script>
   <style>
     @keyframes wobble {
       0% { transform: rotate(0deg) scale(1); }
@@ -102,7 +102,7 @@
     .status {
         margin-top: 20px;
         font-weight: 600;
-        color: #d81b60;
+        transition: color 0.5s;
     }
   </style>
 </head>
@@ -129,7 +129,7 @@
 
     // --- Konfigurasi MQTT (Tidak perlu diubah) ---
     const mqttBroker = "broker.hivemq.com";
-    const mqttPort = 8000; // Port WebSocket
+    const mqttPort = 8000; // Port WebSocket untuk browser
     const mqttClientId = "HeartBox-WebApp-" + new Date().getTime();
 
     const statusDiv = document.getElementById('status');
@@ -137,82 +137,97 @@
     const messageForm = document.getElementById('messageForm');
     const mainContainer = document.getElementById('main-container');
 
+    // Nonaktifkan tombol kirim saat awal
+    submitButton.disabled = true;
+    statusDiv.style.color = "#d81b60"; // Warna status awal
+
     // Buat koneksi MQTT
     const client = new Paho.MQTT.Client(mqttBroker, mqttPort, mqttClientId);
 
     // Atur callback handler
     client.onConnectionLost = onConnectionLost;
-    client.onMessageArrived = onMessageArrived;
+    client.onMessageArrived = onMessageArrived; // Wajib ada, walau tidak dipakai
 
     // Opsi koneksi
     const connectOptions = {
         onSuccess: onConnect,
         onFailure: onFailure,
-        useSSL: false
+        useSSL: false,
+        reconnect: true, // Coba hubungkan kembali secara otomatis
+        cleanSession: true
     };
 
-    // Hubungkan ke broker
-    client.connect(connectOptions);
+    // Fungsi untuk memulai koneksi
+    function startConnect() {
+        console.log("Mencoba terhubung ke Broker MQTT...");
+        client.connect(connectOptions);
+    }
 
+    // Fungsi jika berhasil terhubung
     function onConnect() {
         console.log("Terhubung ke Broker MQTT!");
         statusDiv.textContent = "Terhubung! Siap mengirim pesan.";
-        statusDiv.style.color = "#4CAF50";
+        statusDiv.style.color = "#4CAF50"; // Warna hijau
         submitButton.disabled = false;
     }
     
+    // Fungsi jika gagal terhubung
     function onFailure(response) {
-        console.log("Gagal terhubung: " + response.errorMessage);
-        statusDiv.textContent = "Gagal terhubung ke server.";
-        statusDiv.style.color = "#f44336";
+        console.error("Gagal terhubung: " + response.errorMessage);
+        statusDiv.textContent = "Gagal terhubung. Cek koneksi internet.";
+        statusDiv.style.color = "#f44336"; // Warna merah
         submitButton.disabled = true;
     }
 
+    // Fungsi jika koneksi terputus
     function onConnectionLost(responseObject) {
         if (responseObject.errorCode !== 0) {
-            console.log("Koneksi terputus: " + responseObject.errorMessage);
-            statusDiv.textContent = "Koneksi terputus. Coba refresh halaman.";
-            statusDiv.style.color = "#f44336";
+            console.error("Koneksi terputus: " + responseObject.errorMessage);
+            statusDiv.textContent = "Koneksi terputus. Mencoba lagi...";
+            statusDiv.style.color = "#f44336"; // Warna merah
             submitButton.disabled = true;
         }
     }
 
     // Fungsi ini tidak kita gunakan, tapi wajib ada
     function onMessageArrived(message) {
-        console.log("Pesan diterima: " + message.payloadString);
+        console.log("Pesan diterima (seharusnya tidak terjadi): " + message.payloadString);
     }
 
     // Fungsi untuk mengirim pesan
     function sendMessage(text) {
         if (!client.isConnected()) {
             statusDiv.textContent = "Tidak terhubung. Tidak bisa mengirim.";
+            statusDiv.style.color = "#f44336";
             return;
         }
         const message = new Paho.MQTT.Message(text);
         message.destinationName = mqttTopic;
         client.send(message);
-        console.log("Pesan terkirim: " + text);
+        console.log("Pesan terkirim ke topik '" + mqttTopic + "': " + text);
     }
 
     // Event listener untuk form submission
     messageForm.addEventListener('submit', function(event) {
         event.preventDefault(); // Mencegah form reload halaman
         const messageText = document.getElementById('messageInput').value;
-        if (messageText) {
+        if (messageText && client.isConnected()) {
             sendMessage(messageText);
             // Tampilkan pesan sukses
             mainContainer.innerHTML = `
-                <div class="icon" style="color: #4CAF50; animation: none;">&#10004;</div>
+                <div class="icon" style="color: #4CAF50; animation: none; font-size: 4em;">&#10004;</div>
                 <h2 style="font-size: 2em;">Pesan Terkirim!</h2>
                 <p style="color: #555; font-size: 1.1em;">Pesan kamu sudah meluncur ke HeartBox Almei!</p>
                 <a href="#" onclick="location.reload();" style="display: inline-block; padding: 15px 30px; border-radius: 50px; border: none; background: linear-gradient(45deg, #e91e63, #c2185b); color: white; font-size: 1.1em; font-weight: 600; text-decoration: none; cursor: pointer;">Kirim Pesan Lain</a>
             `;
+        } else {
+            statusDiv.textContent = "Tidak bisa mengirim, koneksi terputus.";
+            statusDiv.style.color = "#f44336";
         }
     });
 
-    // Nonaktifkan tombol kirim saat awal
-    submitButton.disabled = true;
-
+    // Mulai koneksi saat halaman dimuat
+    startConnect();
 </script>
 </body>
 </html>
