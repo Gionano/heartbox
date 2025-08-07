@@ -129,7 +129,7 @@
 
     // --- Konfigurasi MQTT (Tidak perlu diubah) ---
     const mqttBroker = "broker.hivemq.com";
-    const mqttPort = 8000; // Port WebSocket untuk browser
+    const mqttPort = 8884; // Port WebSocket AMAN (WSS) untuk browser dari HTTPS
     const mqttClientId = "HeartBox-WebApp-" + new Date().getTime();
 
     const statusDiv = document.getElementById('status');
@@ -142,7 +142,7 @@
     statusDiv.style.color = "#d81b60"; // Warna status awal
 
     // Buat koneksi MQTT
-    const client = new Paho.MQTT.Client(mqttBroker, mqttPort, mqttClientId);
+    const client = new Paho.Client(mqttBroker, mqttPort, mqttClientId);
 
     // Atur callback handler
     client.onConnectionLost = onConnectionLost;
@@ -152,7 +152,7 @@
     const connectOptions = {
         onSuccess: onConnect,
         onFailure: onFailure,
-        useSSL: false,
+        useSSL: true, // WAJIB true untuk koneksi aman dari HTTPS
         reconnect: true, // Coba hubungkan kembali secara otomatis
         cleanSession: true
     };
