@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-  <title>HeartBox by Almei</title>
+  <title>HeartBox For Someone</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,7 +111,7 @@
     <div class="icon">&#128232;</div>
     <h2>Kotak Kenangan</h2>
     <form id="messageForm">
-      <label for="messageInput">Tulis pesan kamu untuk di tampilkan, Almei:</label>
+      <label for="messageInput">Tulis pesan kamu untuk di tampilkan:</label>
       <input type="text" id="messageInput" name="messageInput" maxlength="100" required>
       <br>
       <input type="submit" id="submitButton" value="Kirim Pesan Kamu">
@@ -124,7 +124,8 @@
     // --- PENGATURAN YANG PERLU ANDA UBAH ---
     // ===================================================================
     // PASTIKAN TOPIK INI SAMA PERSIS DENGAN YANG ADA DI KODE ARDUINO!
-    const mqttTopic = "almei/heartbox/pesan-rahasia";
+    // Contoh agus/testing/heartbox
+    const mqttTopic = "(Repositori MQTT)";
     // ===================================================================
 
     // --- Konfigurasi MQTT (Tidak perlu diubah) ---
@@ -201,7 +202,7 @@
             statusDiv.style.color = "#f44336";
             return;
         }
-        const message = new Paho.MQTT.Message(text);
+        const message = new Paho.Message(text); // <-- PERBAIKAN DI SINI
         message.destinationName = mqttTopic;
         client.send(message);
         console.log("Pesan terkirim ke topik '" + mqttTopic + "': " + text);
