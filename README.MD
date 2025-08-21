@@ -28,6 +28,12 @@
 *   Resistor (sesuai kebutuhan untuk LED)
 *   Breadboard dan Kabel Jumper
 
+## ⚙️ Gambaran Pemasangan Kabel
+<p align="center">
+  <img src="src/7-3.png" alt="Foto Proyek HeartBox" width="500"/>
+</p>
+
+
 ## 📚 Kebutuhan Software & Library
 
 1.  **[Arduino IDE](https://www.arduino.cc/en/software)**
@@ -103,6 +109,7 @@ Pilih board (misal: "NodeMCU 1.0 (ESP-12E Module)") dan port yang benar di Ardui
 *   **Gagal Terhubung ke Server Pesan (MQTT):** Jika perangkat berhasil terhubung ke WiFi tetapi gagal terhubung ke server MQTT (misalnya, server sedang down atau salah konfigurasi), perangkat akan mencoba menghubungkan kembali sebanyak 5 kali. Jika masih gagal, perangkat akan menganggap ada masalah dengan koneksi internet, menghapus pengaturan WiFi, dan restart untuk memulai ulang proses konfigurasi. Ini untuk memastikan perangkat tidak "terjebak" dalam kondisi tidak bisa menerima pesan.
 
 ---
+
 
 
 
