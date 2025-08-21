@@ -1,7 +1,7 @@
-# HeartBox - Kotak Pesan Cinta Digital berbasis IoT
+# HeartBox - Kotak Pesan Cinta Digital berbasis IoT Dengan ESP8266
 
 <p align="center">
-  <img src="7-3.png" alt="Foto Proyek HeartBox" width="500"/>
+  <img src="img_heartbox" alt="Foto Proyek HeartBox" width="500"/>
 </p>
 
 **HeartBox** adalah sebuah proyek IoT (Internet of Things) yang romantis dan personal. Bayangkan sebuah kotak fisik yang bisa menerima pesan teks yang dikirim dari mana saja di seluruh dunia melalui internet. Pesan tersebut akan ditampilkan di layar LCD, lengkap dengan notifikasi lampu LED yang berkedip lembut. Ini adalah cara modern dan personal untuk mengirimkan "surat cinta" digital kepada orang terkasih.
@@ -103,3 +103,4 @@ Pilih board (misal: "NodeMCU 1.0 (ESP-12E Module)") dan port yang benar di Ardui
 *   **Gagal Terhubung ke Server Pesan (MQTT):** Jika perangkat berhasil terhubung ke WiFi tetapi gagal terhubung ke server MQTT (misalnya, server sedang down atau salah konfigurasi), perangkat akan mencoba menghubungkan kembali sebanyak 5 kali. Jika masih gagal, perangkat akan menganggap ada masalah dengan koneksi internet, menghapus pengaturan WiFi, dan restart untuk memulai ulang proses konfigurasi. Ini untuk memastikan perangkat tidak "terjebak" dalam kondisi tidak bisa menerima pesan.
 
 ---
+
