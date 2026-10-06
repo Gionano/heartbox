@@ -36,7 +36,7 @@
 
 ## 🔌 Gambaran Pemasangan Kabel
 <p align="center">
-  <img src="src/breadboard.jpg" alt="Skema Pemasangan HeartBox" width="500"/>
+  <img src="src/breadboard.png" alt="Skema Pemasangan HeartBox" width="500"/>
 </p>
 
 ## 📚 Kebutuhan Software & Library
